@@ -37,9 +37,9 @@ class Cube(Qt3DExtras.Qt3DWindow):
 
     def update_rotation(self, yaw: float, pitch: float, roll: float):
         # Create the quaternion rotations for each axis
-        quaternionYaw = QQuaternion.fromEulerAngles(0, yaw, 0)
-        quaternionPitch = QQuaternion.fromEulerAngles(pitch, 0, 0)
-        quaternionRoll = QQuaternion.fromEulerAngles(0, 0, roll)
+        quaternionYaw = QQuaternion.fromEulerAngles(0, -yaw, 0)
+        quaternionPitch = QQuaternion.fromEulerAngles(-pitch, 0, 0)
+        quaternionRoll = QQuaternion.fromEulerAngles(0, 0, -roll)
 
         # Combine all rotations in the proper order
         finalQuaternion = quaternionYaw * quaternionPitch * quaternionRoll
