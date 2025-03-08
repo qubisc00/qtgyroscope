@@ -4,6 +4,7 @@ from PySide6.QtGui import QGuiApplication, QPalette, QColor
 from PySide6.QtWidgets import QApplication, QSizePolicy, QMainWindow, QWidget, QVBoxLayout, QSlider, QLabel
 from PySide6.QtGui import (QGuiApplication)
 from gyroscope import Cube
+from circle import CircleWidget
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -11,9 +12,12 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle('Test')
 
+        self.circleWidget = CircleWidget()
+
         self.label1 = QLabel("Yaw: 0")
         self.slider1 = QSlider(Qt.Horizontal)
         self.slider1.valueChanged.connect(lambda value: self.update_label_and_rotation(value, "yaw"))
+        self.slider1.valueChanged.connect(lambda value: self.circleWidget.set_angle(value))
         self.slider1.setRange(0,360)
         
         self.label2 = QLabel("Pitch: 0")
@@ -36,6 +40,7 @@ class MainWindow(QMainWindow):
         self.container.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.container.setFocusPolicy(Qt.StrongFocus)
 
+        self.layout.addWidget(self.circleWidget)
         self.layout.addWidget(self.container)
         self.layout.addWidget(self.label1)
         self.layout.addWidget(self.slider1)
