@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 
 plt.rcParams["font.size"] = 7
+plt.style.use('dark_background')
 
 class GyroMonitorWidget(QWidget):
     def __init__(self, title=None):
@@ -28,7 +29,7 @@ class GyroMonitorWidget(QWidget):
         # Initialize data
         self.x_data = np.linspace(-10, 0, 11)  # Time from -10s to 0s
         self.y_data = np.zeros_like(self.x_data)  # Placeholder for gyro angles
-        self.line, = self.ax.plot(self.x_data, self.y_data, marker='', linestyle='-')
+        self.line, = self.ax.plot(self.x_data, self.y_data, marker='', linestyle='-', color='green')
 
         # Formatting
         # self.ax.set_xlim(-10, 0)
@@ -36,7 +37,7 @@ class GyroMonitorWidget(QWidget):
         self.ax.set_xlabel("Time (s)")
         self.ax.set_ylabel("deg (°)")
         self.ax.set_title(title)
-        self.ax.grid(True)
+        self.ax.grid(False)
 
         # Timer for updating data
         self.timer = QTimer(self)
@@ -58,30 +59,28 @@ class GyroMonitorWidget(QWidget):
         self.canvas.draw()
 
     def set_y_limit(self):
-        # Calculate the upper and lower limits
-        upper_limit = int(abs(self.y_data.max())) + 5
-        bottom_limit = int(self.y_data.min()) - 5
+        # Get the min and max values of the current data
+        y_min, y_max = self.y_data.min(), self.y_data.max()
 
-        # Ensure that the limit doesn't exceed 180
-        if upper_limit > 180:
-            upper_limit = 180
-        if bottom_limit < -180:
-            bottom_limit = -180
+        # Ensure a minimum range (start with small zoom)
+        min_range = 10  # Minimum vertical range (e.g., from -5 to 5 initially)
+        buffer = 10  # Additional padding around the data
 
-        # Set the y-axis limits
+        # Calculate new limits with buffer
+        bottom_limit = y_min - buffer
+        upper_limit = y_max + buffer
+
+        # Ensure the range is at least `min_range`
+        if upper_limit - bottom_limit < min_range:
+            center = (y_max + y_min) / 2  # Find the center of the data
+            bottom_limit = center - min_range / 2
+            upper_limit = center + min_range / 2
+
+        # Apply the new limits
         self.ax.set_ylim(bottom_limit, upper_limit)
 
-        # Calculate the total range
-        total_range = upper_limit - bottom_limit
+        # Let Matplotlib determine smart tick locations
+        self.ax.yaxis.set_major_locator(plt.MaxNLocator(nbins=10, integer=True))
 
-        # Calculate a dynamic step size based on the mean limit and range
-        step_size = round(total_range / 6)  # Try for about 6 ticks (this can be adjusted)
 
-        # Optionally, ensure the step size is a reasonable value (e.g., multiple of 5, 10, etc.)
-        if step_size < 5:
-            step_size = 5  # Avoid very small step sizes
-        elif step_size % 5 != 0:
-            step_size = (step_size // 5) * 5  # Round to the nearest multiple of 5
 
-        # Set y-ticks with the calculated step size
-        self.ax.set_yticks(range(bottom_limit, upper_limit + 1, step_size))
