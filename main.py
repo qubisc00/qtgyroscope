@@ -5,6 +5,7 @@ from GyroscopeWidget import *
 from CircleWidget import *
 from GyroMonitorWidget import *
 from DebugToolbox import *
+from SpectrogramWidget import App
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -44,7 +45,8 @@ class MainWindow(QMainWindow):
         self.layout = QVBoxLayout()
 
         # Spectogram and Gyroscope Layout
-        # self.gyroSpectogramLayout.addWidget(self.openglWidget)
+        self.openglWidget = App()
+        self.gyroSpectogramLayout.addWidget(self.openglWidget)
 
         self.cubeGryro = GyroscopeWidget()
         self.cubeGyroContainer = QWidget.createWindowContainer(self.cubeGryro)
