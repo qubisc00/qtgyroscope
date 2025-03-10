@@ -1,8 +1,8 @@
 import numpy as np
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QSizePolicy
-from PySide6.QtCore import QTimer
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.animation import FuncAnimation
 
 plt.rcParams["font.size"] = 7
 plt.style.use('dark_background')
@@ -17,7 +17,7 @@ class GyroMonitorWidget(QWidget):
         # Create layout
         layout = QVBoxLayout()
         self.setLayout(layout)
-        self.setFixedSize(400,200)
+        self.setFixedSize(400, 200)
 
         # Create Matplotlib figure
         self.fig, self.ax = plt.subplots()
@@ -32,23 +32,27 @@ class GyroMonitorWidget(QWidget):
         self.line, = self.ax.plot(self.x_data, self.y_data, marker='', linestyle='-', color='green')
 
         # Formatting
-        # self.ax.set_xlim(-10, 0)
         self.set_y_limit()
         self.ax.set_xlabel("Time (s)")
         self.ax.set_ylabel("deg (°)")
         self.ax.set_title(title)
         self.ax.grid(False)
 
-        # Timer for updating data
-        self.timer = QTimer(self)
-        self.timer.timeout.connect(self.update_plot)
-        self.timer.start(1000)  # Update every second
+        # Store the background for blitting
+        self.background = None
+        self.canvas.mpl_connect('draw_event', self.on_draw)
+
+        # Set up FuncAnimation
+        self.ani = FuncAnimation(self.fig, self.update_plot, interval=1000, blit=True)
+
+    def on_draw(self, event):
+        self.background = self.canvas.copy_from_bbox(self.ax.bbox)
 
     def set_angle(self, angle=None):
         if angle is not None:
             self.angle = angle
 
-    def update_plot(self):
+    def update_plot(self, frame):
         self.y_data = np.roll(self.y_data, -1)
         self.y_data[-1] = self.angle
 
@@ -56,7 +60,16 @@ class GyroMonitorWidget(QWidget):
 
         # Update plot
         self.line.set_ydata(self.y_data)
-        self.canvas.draw()
+
+        # Blit only the updated part
+        if self.background is not None:
+            self.canvas.restore_region(self.background)
+            self.ax.draw_artist(self.line)
+            self.canvas.blit(self.ax.bbox)
+        else:
+            self.canvas.draw_idle()  # Use draw_idle instead of draw
+
+        return self.line,  # Return the updated line for blitting
 
     def set_y_limit(self):
         # Get the min and max values of the current data
@@ -81,6 +94,4 @@ class GyroMonitorWidget(QWidget):
 
         # Let Matplotlib determine smart tick locations
         self.ax.yaxis.set_major_locator(plt.MaxNLocator(nbins=10, integer=True))
-
-
 
