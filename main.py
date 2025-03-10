@@ -1,6 +1,6 @@
 import sys
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QApplication, QSizePolicy, QMainWindow, QWidget, QVBoxLayout, QSlider, QLabel, QHBoxLayout
+from PySide6.QtWidgets import QApplication, QSizePolicy, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout
 from GyroscopeWidget import *
 from CircleWidget import *
 from GyroMonitorWidget import *
@@ -13,16 +13,18 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle('Test')
 
+        # Layouts
         self.gyroGraphLayout = QHBoxLayout()
         self.gyroLayout = QVBoxLayout()
         self.gyroSpectogramLayout = QHBoxLayout()
+        self.central_widget = QWidget()
+        self.layout = QVBoxLayout()
 
         self.circleWidget = CircleWidget()
 
         self.yawGyroWidget = GyroMonitorWidget("Yaw Orientation")
         self.rollGyroWidget = GyroMonitorWidget("Roll Orientation")
         self.pitchGyroWidget = GyroMonitorWidget("Pitch Orientation")
-
         self.gyroGraphLayout.addWidget(self.yawGyroWidget)
         self.gyroGraphLayout.addWidget(self.rollGyroWidget)
         self.gyroGraphLayout.addWidget(self.pitchGyroWidget)
@@ -41,29 +43,26 @@ class MainWindow(QMainWindow):
             self.toolbox.slider3.valueChanged.connect(lambda value: self.update_label_and_rotation(value, "roll"))
             self.toolbox.slider3.valueChanged.connect(lambda value: self.rollGyroWidget.set_angle(value))
 
-        self.central_widget = QWidget()
-        self.layout = QVBoxLayout()
-
-        # Spectogram and Gyroscope Layout
-        self.openglWidget = App()
-        self.gyroSpectogramLayout.addWidget(self.openglWidget)
-
+        # ============ Spectogram and Gyroscope Layout ============
         self.cubeGryro = GyroscopeWidget()
         self.cubeGyroContainer = QWidget.createWindowContainer(self.cubeGryro)
         self.cubeGyroContainer.setFixedSize(200, 200)
         self.cubeGyroContainer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.cubeGyroContainer.setFocusPolicy(Qt.StrongFocus)
+        
+        self.openglWidget = App()
+        self.gyroSpectogramLayout.addWidget(self.openglWidget)
         self.gyroLayout.addWidget(self.circleWidget)
         self.gyroLayout.addWidget(self.cubeGyroContainer)
-
         self.gyroSpectogramLayout.addLayout(self.gyroLayout)
+        # =========================================================
 
         self.layout.addLayout(self.gyroGraphLayout)
         self.layout.addLayout(self.gyroSpectogramLayout)
-
         self.central_widget.setLayout(self.layout)
         self.setCentralWidget(self.central_widget)
 
+    # For debug purposes
     def update_label_and_rotation(self, value: int, axis: str):
         if axis == "yaw":
             if __debug__:
