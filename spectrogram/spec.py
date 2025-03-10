@@ -1,9 +1,7 @@
 from spectrogram import config
 import librosa
 import matplotlib
-import moderngl
 import numpy as np
-import time
 
 from spectrogram.utils import orthographic
 

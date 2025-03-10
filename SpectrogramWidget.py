@@ -101,4 +101,3 @@ class App(Window):
 
 	def exit(self):
 		self.source.release()
-

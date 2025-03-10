@@ -3,7 +3,6 @@ import librosa
 import math
 import numpy as np
 import pyaudio
-import time
 
 class Source:
 
