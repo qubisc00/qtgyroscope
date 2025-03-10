@@ -12,7 +12,8 @@ class GyroMonitorWidget(QWidget):
         super().__init__()
 
         self.angle = 0
-        self.max_value = 0
+        self.max_value = -np.inf
+        self.min_value = np.inf
 
         # Create layout
         layout = QVBoxLayout()
@@ -32,10 +33,10 @@ class GyroMonitorWidget(QWidget):
         self.line, = self.ax.plot(self.x_data, self.y_data, marker='', linestyle='-', color='green')
 
         # Formatting
-        self.set_y_limit()
         self.ax.set_xlabel("Time (s)")
         self.ax.set_ylabel("deg (°)")
-        self.ax.set_title(title)
+        self.ax.set_ylim(-190, 190)  # Set y-axis limits
+        self.ax.set_yticks(np.linspace(190, -190, 5))  # Set y-axis ticks from 180 to -180 in 20 steps
         self.ax.grid(False)
 
         # Store the background for blitting
@@ -56,7 +57,9 @@ class GyroMonitorWidget(QWidget):
         self.y_data = np.roll(self.y_data, -1)
         self.y_data[-1] = self.angle
 
-        self.set_y_limit()
+        # Update max and min values
+        self.max_value = max(self.max_value, self.angle)
+        self.min_value = min(self.min_value, self.angle)
 
         # Update plot
         self.line.set_ydata(self.y_data)
@@ -70,28 +73,3 @@ class GyroMonitorWidget(QWidget):
             self.canvas.draw_idle()  # Use draw_idle instead of draw
 
         return self.line,  # Return the updated line for blitting
-
-    def set_y_limit(self):
-        # Get the min and max values of the current data
-        y_min, y_max = self.y_data.min(), self.y_data.max()
-
-        # Ensure a minimum range (start with small zoom)
-        min_range = 10  # Minimum vertical range (e.g., from -5 to 5 initially)
-        buffer = 10  # Additional padding around the data
-
-        # Calculate new limits with buffer
-        bottom_limit = y_min - buffer
-        upper_limit = y_max + buffer
-
-        # Ensure the range is at least `min_range`
-        if upper_limit - bottom_limit < min_range:
-            center = (y_max + y_min) / 2  # Find the center of the data
-            bottom_limit = center - min_range / 2
-            upper_limit = center + min_range / 2
-
-        # Apply the new limits
-        self.ax.set_ylim(bottom_limit, upper_limit)
-
-        # Let Matplotlib determine smart tick locations
-        self.ax.yaxis.set_major_locator(plt.MaxNLocator(nbins=10, integer=True))
-
