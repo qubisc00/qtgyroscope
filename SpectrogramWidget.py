@@ -1,21 +1,16 @@
 from spectrogram import config
 
 from spectrogram.rect import Rect
-from spectrogram.source import File, Microphone
+from spectrogram.source import Microphone
 from spectrogram.spec import Spec
 from spectrogram.text import Text
 from spectrogram.ticks import Ticks
 from spectrogram.wave import Wave
 from spectrogram.window import Window
 
-from spectrogram.utils import logger
-
-
 class App(Window):
 
 	def init(self):
-		logger.info(f'init')
-		#self.source = File('audio/gettysburg.wav')
 		self.source = Microphone()
 
 		self.nodes = []
@@ -87,15 +82,12 @@ class App(Window):
 			text.add(f'{hz}hz', 62, y, align='right')
 
 	def size(self, w, h):
-		logger.info(f'size {w} {h}')
 		for node in self.nodes:
 			node.size(w, h)
 
 	def draw(self, dt):
 		available = self.source.available()
 		
-		logger.info(f'{available}')
-
 		for i in range(2):
 			window = self.source.get()
 			self.wave.add(window)
@@ -108,6 +100,5 @@ class App(Window):
 			node.draw()
 
 	def exit(self):
-		logger.info('exit')
 		self.source.release()
 

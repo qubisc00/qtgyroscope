@@ -7,12 +7,9 @@ import time
 
 from spectrogram.utils import orthographic
 
-
 hann = np.hanning(config.WINDOW_SIZE)
 
 color_map = matplotlib.colormaps.get_cmap('inferno')
-
-
 
 def stft_slice(window):
 	n = window.shape[0]
@@ -32,7 +29,6 @@ def stft_color(slice, min_db=-30, max_db=30):
 	slice = (slice * 255).astype('u1')
 	slice = slice[:, :3]
 	return slice
-
 
 class Spec:
 
@@ -112,9 +108,3 @@ class Spec:
 	def draw(self):
 		self.texture.use(0)
 		self.vao.render()
-
-
-
-
-
-

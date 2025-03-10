@@ -60,6 +60,3 @@ class Wave:
 
 	def draw(self):
 		self.vao.render(moderngl.LINES)
-
-
-

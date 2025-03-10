@@ -5,8 +5,6 @@ import numpy as np
 import pyaudio
 import time
 
-from spectrogram.utils import logger
-
 class Source:
 
 	def __init__(self, *args, **kwargs):
@@ -65,9 +63,6 @@ class File(Source):
 			self.complete = True
 		return (data, pyaudio.paContinue)
 
-
-
-
 class Microphone(Source):
 	
 	def init(self):
@@ -86,15 +81,3 @@ class Microphone(Source):
 		self.data.extend(data)
 		self.total = len(self.data)
 		return None, pyaudio.paContinue
-
-
-
-
-if __name__ == '__main__':
-	filename = './audio/gettysburg.wav'
-
-	source = File(filename)
-
-	time.sleep(5)
-
-

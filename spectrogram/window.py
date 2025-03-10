@@ -8,8 +8,6 @@ from PySide6.QtWidgets import QApplication
 from PySide6.QtOpenGLWidgets import QOpenGLWidget
 from PySide6.QtGui import QShortcut
 
-from spectrogram.utils import logger
-
 class Window(QOpenGLWidget):
 
 	frame_rate = 61
@@ -67,23 +65,3 @@ class Window(QOpenGLWidget):
 		main = cls()
 		main.show()
 		app.exit(app.exec())
-
-
-	#---------------
-	#	Interface
-	#---------------
-	
-	def init(self):
-		logger.info('init')
-
-	def size(self, w, h):
-		logger.info(f'size {w} {h}')
-
-	def draw(self, dt):
-		logger.info(f'draw {dt:.4f}')
-
-	def exit(self):
-		logger.info('exit')
-
-
-

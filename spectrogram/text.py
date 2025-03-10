@@ -3,13 +3,11 @@ import numpy as np
 
 from spectrogram.utils import orthographic
 
-
 SCALE = 2
 FONT_SIZE = 12
 
 # Adapted frpm this answer
 #	https://stackoverflow.com/questions/63836707/how-to-render-text-with-pyopengl
-
 
 class CharacterSlot:
 
@@ -27,7 +25,6 @@ class CharacterSlot:
 		self.texture = ctx.texture(size, 1, data)
 		self.texture.repeat_x = False
 		self.texture.repeat_y = False
-
 
 class Text:
 
@@ -128,6 +125,3 @@ class Text:
 				self.set_geometry(x, y, w / SCALE, h / SCALE)
 				self.vao.render()
 				x = x + (character.advance >> 6) / SCALE
-
-
-

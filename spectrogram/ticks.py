@@ -1,4 +1,3 @@
-
 import moderngl
 import numpy as np
 
@@ -63,5 +62,3 @@ class Ticks:
 
 	def draw(self):
 		self.vao.render(moderngl.LINES)
-
-
