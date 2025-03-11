@@ -7,7 +7,7 @@ from matplotlib.animation import FuncAnimation
 plt.rcParams["font.size"] = 7
 plt.style.use('dark_background')
 
-class GyroMonitorWidget(QWidget):
+class BodyOrientationWidget(QWidget):
     def __init__(self, title=None):
         super().__init__()
 
@@ -26,6 +26,8 @@ class GyroMonitorWidget(QWidget):
         self.canvas = FigureCanvas(self.fig)
         self.canvas.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         layout.addWidget(self.canvas)
+
+        self.ax.set_title(title)
 
         # Initialize data
         self.x_data = np.linspace(-10, 0, 11)  # Time from -10s to 0s

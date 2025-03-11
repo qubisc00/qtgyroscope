@@ -1,11 +1,10 @@
 import sys
-from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QApplication, QSizePolicy, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout
-from GyroscopeWidget import *
+from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout
 from CircleWidget import *
-from GyroMonitorWidget import *
+from BodyOrientationWidget import *
 from DebugToolbox import *
 from SpectrogramWidget import App
+from GyrosMonitorWidget import * 
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -22,9 +21,11 @@ class MainWindow(QMainWindow):
 
         self.circleWidget = CircleWidget()
 
-        self.yawGyroWidget = GyroMonitorWidget("Yaw Orientation")
-        self.rollGyroWidget = GyroMonitorWidget("Roll Orientation")
-        self.pitchGyroWidget = GyroMonitorWidget("Pitch Orientation")
+        self.yawGyroWidget = BodyOrientationWidget("Yaw Orientation")
+        self.rollGyroWidget = BodyOrientationWidget("Roll Orientation")
+        self.pitchGyroWidget = BodyOrientationWidget("Pitch Orientation")
+        self.gyrosWidget = GyrosMonitorWidget("Gyros")
+        self.gyroGraphLayout.addWidget(self.gyrosWidget)
         self.gyroGraphLayout.addWidget(self.yawGyroWidget)
         self.gyroGraphLayout.addWidget(self.rollGyroWidget)
         self.gyroGraphLayout.addWidget(self.pitchGyroWidget)
@@ -36,24 +37,20 @@ class MainWindow(QMainWindow):
             self.toolbox.slider1.valueChanged.connect(lambda value: self.update_label_and_rotation(value, "yaw"))
             self.toolbox.slider1.valueChanged.connect(lambda value: self.circleWidget.set_angle(value))
             self.toolbox.slider1.valueChanged.connect(lambda value: self.yawGyroWidget.set_angle(value))
+            self.toolbox.slider1.valueChanged.connect(lambda value: self.gyrosWidget.set_yaw_angle(value))
 
             self.toolbox.slider2.valueChanged.connect(lambda value: self.update_label_and_rotation(value, "pitch"))
             self.toolbox.slider2.valueChanged.connect(lambda value: self.pitchGyroWidget.set_angle(value))
+            self.toolbox.slider2.valueChanged.connect(lambda value: self.gyrosWidget.set_pitch_angle(value))
 
             self.toolbox.slider3.valueChanged.connect(lambda value: self.update_label_and_rotation(value, "roll"))
             self.toolbox.slider3.valueChanged.connect(lambda value: self.rollGyroWidget.set_angle(value))
+            self.toolbox.slider3.valueChanged.connect(lambda value: self.gyrosWidget.set_roll_angle(value))
 
         # ============ Spectogram and Gyroscope Layout ============
-        self.cubeGryro = GyroscopeWidget()
-        self.cubeGyroContainer = QWidget.createWindowContainer(self.cubeGryro)
-        self.cubeGyroContainer.setFixedSize(200, 200)
-        self.cubeGyroContainer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        self.cubeGyroContainer.setFocusPolicy(Qt.StrongFocus)
-        
         self.openglWidget = App()
         self.gyroSpectogramLayout.addWidget(self.openglWidget)
         self.gyroLayout.addWidget(self.circleWidget)
-        self.gyroLayout.addWidget(self.cubeGyroContainer)
         self.gyroSpectogramLayout.addLayout(self.gyroLayout)
         # =========================================================
 
@@ -67,16 +64,12 @@ class MainWindow(QMainWindow):
         if axis == "yaw":
             if __debug__:
                 self.toolbox.label1.setText(f"Yaw: {value}")
-                self.cubeGryro.update_rotation(value, self.toolbox.slider2.value(), self.toolbox.slider3.value())
         elif axis == "pitch":
             if __debug__:
                 self.toolbox.label2.setText(f"Pitch: {value}")
-                self.cubeGryro.update_rotation(self.toolbox.slider1.value(), value, self.toolbox.slider3.value())
         elif axis == "roll":
             if __debug__:
                 self.toolbox.label3.setText(f"Roll: {value}")
-                self.cubeGryro.update_rotation(self.toolbox.slider1.value(), self.toolbox.slider2.value(), value)
-
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
