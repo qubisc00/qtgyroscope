@@ -1,6 +1,5 @@
 import sys
 from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout
-from CircleWidget import *
 from BodyOrientationWidget import *
 from DebugToolbox import *
 from SpectrogramWidget import App
@@ -13,13 +12,10 @@ class MainWindow(QMainWindow):
         self.setWindowTitle('Test')
 
         # Layouts
-        self.gyroGraphLayout = QHBoxLayout()
-        self.gyroLayout = QVBoxLayout()
-        self.gyroSpectogramLayout = QHBoxLayout()
+        self.gyroGraphLayout = QVBoxLayout()
+        self.mainLayout = QHBoxLayout()
         self.central_widget = QWidget()
         self.layout = QVBoxLayout()
-
-        self.circleWidget = CircleWidget()
 
         self.yawGyroWidget = BodyOrientationWidget("Yaw Orientation")
         self.rollGyroWidget = BodyOrientationWidget("Roll Orientation")
@@ -49,13 +45,11 @@ class MainWindow(QMainWindow):
 
         # ============ Spectogram and Gyroscope Layout ============
         self.openglWidget = App()
-        self.gyroSpectogramLayout.addWidget(self.openglWidget)
-        self.gyroLayout.addWidget(self.circleWidget)
-        self.gyroSpectogramLayout.addLayout(self.gyroLayout)
+        self.mainLayout.addWidget(self.openglWidget)
+        self.mainLayout.addLayout(self.gyroGraphLayout)
         # =========================================================
 
-        self.layout.addLayout(self.gyroGraphLayout)
-        self.layout.addLayout(self.gyroSpectogramLayout)
+        self.layout.addLayout(self.mainLayout)
         self.central_widget.setLayout(self.layout)
         self.setCentralWidget(self.central_widget)
 
