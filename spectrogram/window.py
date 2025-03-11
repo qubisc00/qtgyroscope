@@ -2,10 +2,9 @@ from spectrogram import config
 import moderngl
 import time
 
-from PySide6.QtCore import Qt, QTimer
+from PySide6.QtCore import QTimer
 from PySide6.QtGui import QSurfaceFormat
 from PySide6.QtOpenGLWidgets import QOpenGLWidget
-from PySide6.QtGui import QShortcut
 
 class Window(QOpenGLWidget):
 
@@ -26,8 +25,6 @@ class Window(QOpenGLWidget):
 		self.setFormat(fmt)
 
 		self.t = None
-
-		QShortcut(Qt.Key_Escape, self, self.quit)
 
 		self.timer = QTimer()
 		self.timer.timeout.connect(self.update)
@@ -52,7 +49,3 @@ class Window(QOpenGLWidget):
 		dt = now - self.t if self.t else 1.0 / self.frame_rate
 		self.t = now
 		self.draw(dt)
-
-	def quit(self):
-		self.exit()
-		self.close()
