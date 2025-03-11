@@ -3,5 +3,5 @@ main:
 debug:
 	. .env/bin/activate && python main.py
 test:
-. .env/bin/activate && python test.py
+	. .env/bin/activate && python test.py
 
