@@ -31,7 +31,6 @@ class MainWindow(QMainWindow):
             self.toolbox.show()
 
             self.toolbox.slider1.valueChanged.connect(lambda value: self.update_label_and_rotation(value, "yaw"))
-            self.toolbox.slider1.valueChanged.connect(lambda value: self.circleWidget.set_angle(value))
             self.toolbox.slider1.valueChanged.connect(lambda value: self.yawGyroWidget.set_angle(value))
             self.toolbox.slider1.valueChanged.connect(lambda value: self.gyrosWidget.set_yaw_angle(value))
 
